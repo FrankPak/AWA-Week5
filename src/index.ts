@@ -1,14 +1,10 @@
 import { Request, Response, Router } from "express";
 import path  from "path"
-import fs from "fs"
+import {User, type IUser, type ITodo} from "./models/User"
 
 const router: Router = Router()
 
-fs.readFile('data.json', (err, data) => {
-  if (err){
-    fs.writeFileSync('data.json', "")
-  }
-})
+
 
 type TUser = {
   name: string,
@@ -17,8 +13,8 @@ type TUser = {
 
 let userList: TUser[] = []
 
-
-router.post('/add', (req, res) => {
+/*
+router.post('/addd', (req, res) => {
   let name: string = req.body.name
   let todo: string = req.body.todo
   let index = userList.findIndex((element) => element.name === name) //Maybe problems in the future
@@ -29,7 +25,7 @@ router.post('/add', (req, res) => {
       todos: [todo]
     }
     
-    userList.push(newUser)
+    //userList.push(newUser)
     res.send(`Todo added successfully for user ${name}.`)
     return
   }
@@ -41,8 +37,43 @@ router.post('/add', (req, res) => {
 
   res.send(`Todo added successfully for user ${name}.`)
 })
+  */
 
-router.get('/todos/:id', (req, res) => {
+router.post('/add', async (req: Request, res: Response) => {
+  const name: string = req.body.name
+  const todo: string = req.body.todo
+  const newTodo: ITodo = {todo: todo}
+  console.log(newTodo)
+  try{
+    const user: IUser | null = await User.findOne({name: name})
+    console.log(user)
+    if (!user) {
+
+      const user: IUser = new User({
+        name: name,
+        todos: [newTodo]
+      })
+
+      await user.save()
+      console.log(`Todo added successfully for user ${name}.`)
+      return res.send(`Todo added successfully for user ${name}.`)
+    } else {
+      user.todos.push(newTodo)
+      await user.save()
+      return res.send(`Todo added successfully for user ${name}.`)
+    }
+
+  } catch (error: any) {
+    console.error(`Error while saving user/todo: ${error}`)
+    return res.status(500).send("Internal server error")
+  }
+
+})
+
+
+
+
+router.get('/todos/:id', async(req, res) => {
   let name: string = req.params.id
   let index = userList.findIndex((element) => element.name === name) //Maybe problems in the future
 
@@ -86,26 +117,5 @@ router.put('/update', (req, res) => {
   res.send(`Todo deleted successfully.`)
  
 })
-/*
-router.post('/users', (req, res) => {
-  //console.log(req.body.email)
-  
-  let userName: string = req.body.name
-  let userEmail: string = req.body.email
 
-  let newUser: TUser = {
-    name: userName,
-    todos: string[]
-  }
-
-  userList.push(newUser)
-  //console.log(userList)
-  
-  res.send("User successfully added")
-})
-
-router.get('/users', (req, res) => {
-  res.status(201).json({users: userList})
-})
-*/
 export default router
