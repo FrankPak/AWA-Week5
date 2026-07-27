@@ -122,7 +122,7 @@ async function updateTodo(name) {
 
     //console.log(todosList)
     todosList.forEach(todo => {
-        addUserWall(name,todo)
+        addUserWall(name,   todo.todo)
     })
 }
 

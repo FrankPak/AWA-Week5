@@ -87,33 +87,21 @@ router.get('/todos/:id', async (req: Request<{id: string}>, res: Response) => {
  
 })
 
-router.delete('/delete', async (req: Request, res: Response) => {
-  let name: string = req.body.name
-  let index = userList.findIndex((element) => element.name === name) //Maybe problems in the future
-  
-  if (index === -1) {
-    res.send("User not found!")
-    return
-  }
 
-  userList.splice(index,1) //deletes the user from lists
-
-  res.send(`User deleted successfully.`)
- 
-})
 
 router.put('/update', async (req: Request, res: Response) => {
-  let name: string = req.body.name
+  let username: string = req.body.name
   let todo: string = req.body.todo
-  let user = userList.find((element) => element.name === name) //this way only the error of possibly undefined for splicing was fixed
+ const user: IUser | null = await User.findOne({name: username})
+
   if (!user) {
     res.send("User not found!")
     return
   }
-
-  let todoIndex = user.todos.indexOf(todo) 
   
-  user.todos.splice(todoIndex,1) 
+  let todoIndex = user.todos.findIndex((element) => element.todo === todo)
+  user.todos.splice(todoIndex,1)
+  await user.save()
 
   res.send(`Todo deleted successfully.`)
  
