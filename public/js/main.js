@@ -88,6 +88,8 @@ function initialize() {
 function addUserWall(name,todo, checked) {
     const searchTodoList = document.getElementById("todoList")    
     const listItem = document.createElement("li")
+    const label = document.createElement("label")
+    const span = document.createElement("span")
     const aEvent = document.createElement("a")
     const checkBox = document.createElement("input")
 
@@ -108,6 +110,7 @@ function addUserWall(name,todo, checked) {
     })
 
     aEvent.className = "delete-task"
+    aEvent.href = "#"
     //smarter way probably putting addEventlistener to the whole set to initlaize func and 
     aEvent.addEventListener("click", async function () {
         const responseDelTodoData = await fetch("http://localhost:3000/update", {
@@ -125,8 +128,12 @@ function addUserWall(name,todo, checked) {
     })
 
     aEvent.append(`${todo}`)
-    listItem.appendChild(checkBox)
-    listItem.appendChild(aEvent)
+
+    label.appendChild(checkBox)
+    label.appendChild(span)
+    label.appendChild(aEvent)
+   
+    listItem.appendChild(label)
     searchTodoList.appendChild(listItem)
 }
 
