@@ -56,7 +56,7 @@ function initialize() {
 
         console.log(todosList)
         todosList.forEach(todo => {
-            addUserWall(searchData.value,todo)
+            addUserWall(searchData.value, todo.todo)
         })
         
         deleteUserBtn.removeAttribute("hidden")

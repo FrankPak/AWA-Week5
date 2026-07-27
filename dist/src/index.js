@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const User_1 = require("./models/User");
+const promises_1 = require("inspector/promises");
 const router = (0, express_1.Router)();
 let userList = [];
 /*
@@ -33,10 +34,10 @@ router.post('/add', async (req, res) => {
     const name = req.body.name;
     const todo = req.body.todo;
     const newTodo = { todo: todo };
-    console.log(newTodo);
+    promises_1.console.log(newTodo);
     try {
         const user = await User_1.User.findOne({ name: name });
-        console.log(user);
+        promises_1.console.log(user);
         if (!user) {
             const user = new User_1.User({
                 name: name,
@@ -52,20 +53,21 @@ router.post('/add', async (req, res) => {
         }
     }
     catch (error) {
-        console.error(`Error while saving user/todo: ${error}`);
+        promises_1.console.error(`Error while saving user/todo: ${error}`);
         return res.status(500).send("Internal server error");
     }
 });
 router.get('/todos/:id', async (req, res) => {
-    let name = req.params.id;
-    let index = userList.findIndex((element) => element.name === name); //Maybe problems in the future
-    if (index === -1) {
+    const username = req.params.id;
+    const user = await User_1.User.findOne({ name: username });
+    if (!user) {
         res.send("User not found!");
         return;
     }
-    res.send(userList[index]?.todos);
+    promises_1.console.log(user.todos);
+    res.send(user.todos);
 });
-router.delete('/delete', (req, res) => {
+router.delete('/delete', async (req, res) => {
     let name = req.body.name;
     let index = userList.findIndex((element) => element.name === name); //Maybe problems in the future
     if (index === -1) {
@@ -75,7 +77,7 @@ router.delete('/delete', (req, res) => {
     userList.splice(index, 1); //deletes the user from lists
     res.send(`User deleted successfully.`);
 });
-router.put('/update', (req, res) => {
+router.put('/update', async (req, res) => {
     let name = req.body.name;
     let todo = req.body.todo;
     let user = userList.find((element) => element.name === name); //this way only the error of possibly undefined for splicing was fixed

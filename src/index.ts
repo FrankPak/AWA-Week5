@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import path  from "path"
 import {User,  IUser, ITodo} from "./models/User"
+import { console } from "inspector/promises";
 
 const router: Router = Router()
 
@@ -72,20 +73,21 @@ router.post('/add', async (req: Request, res: Response) => {
 
 
 
-router.get('/todos/:id', async(req, res) => {
-  let name: string = req.params.id
-  let index = userList.findIndex((element) => element.name === name) //Maybe problems in the future
+router.get('/todos/:id', async (req: Request<{id: string}>, res: Response) => {
+  const username: string = req.params.id
+  const user: IUser | null = await User.findOne({name: username})
 
-  if (index === -1) {
+  if (!user) {
     res.send("User not found!")
     return
   }
 
-  res.send(userList[index]?.todos)
+  console.log(user.todos)
+  res.send(user.todos)
  
 })
 
-router.delete('/delete', (req, res) => {
+router.delete('/delete', async (req: Request, res: Response) => {
   let name: string = req.body.name
   let index = userList.findIndex((element) => element.name === name) //Maybe problems in the future
   
@@ -100,7 +102,7 @@ router.delete('/delete', (req, res) => {
  
 })
 
-router.put('/update', (req, res) => {
+router.put('/update', async (req: Request, res: Response) => {
   let name: string = req.body.name
   let todo: string = req.body.todo
   let user = userList.find((element) => element.name === name) //this way only the error of possibly undefined for splicing was fixed
