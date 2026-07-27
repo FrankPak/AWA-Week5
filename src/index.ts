@@ -43,7 +43,7 @@ router.post('/addd', (req, res) => {
 router.post('/add', async (req: Request, res: Response) => {
   const name: string = req.body.name
   const todo: string = req.body.todo
-  const newTodo: ITodo = {todo: todo}
+  const newTodo: ITodo = {todo: todo, checked: false}
   console.log(newTodo)
   try{
     const user: IUser | null = await User.findOne({name: name})
@@ -104,6 +104,26 @@ router.put('/update', async (req: Request, res: Response) => {
   await user.save()
 
   res.send(`Todo deleted successfully.`)
+ 
+})
+
+router.put('/updateTodo', async (req: Request, res: Response) => {
+  let username: string = req.body.name
+  let todo: string = req.body.todo
+  let checked: boolean = req.body.checked
+ const user: IUser | null = await User.findOne({name: username})
+
+  if (!user) {
+    res.send("User not found!")
+    return
+  } else {
+  let todoIndex: number = user.todos.findIndex((element) => element.todo === todo)
+
+  user.todos[todoIndex]!.checked = checked
+  await user.save()
+
+  res.send(`Todo checked successfully.`)
+  }
  
 })
 

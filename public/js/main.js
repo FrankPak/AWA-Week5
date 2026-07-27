@@ -56,7 +56,7 @@ function initialize() {
 
         console.log(todosList)
         todosList.forEach(todo => {
-            addUserWall(searchData.value, todo.todo)
+            addUserWall(searchData.value, todo.todo, todo.checked)
         })
         
         deleteUserBtn.removeAttribute("hidden")
@@ -85,10 +85,27 @@ function initialize() {
 }
 
 
-function addUserWall(name,todo) {
+function addUserWall(name,todo, checked) {
     const searchTodoList = document.getElementById("todoList")    
     const listItem = document.createElement("li")
     const aEvent = document.createElement("a")
+    const checkBox = document.createElement("input")
+
+    checkBox.type = "checkbox"
+    checkBox.id = "myCheckbox"
+    checkBox.className = "checkBoxes"
+    checkBox.checked = checked
+
+    checkBox.addEventListener("change", async function () {
+
+        const responseCheckTodoData = await fetch("http://localhost:3000/updateTodo", {
+            method: "PUT",
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: '{ "name": "' + name + '", "todo": "' + todo + '", "checked": ' + checkBox.checked + ' }'
+        })
+    })
 
     aEvent.className = "delete-task"
     //smarter way probably putting addEventlistener to the whole set to initlaize func and 
@@ -106,7 +123,9 @@ function addUserWall(name,todo) {
         resSearchMsg.textContent = responseDelTodo
         updateTodo(name)
     })
+
     aEvent.append(`${todo}`)
+    listItem.appendChild(checkBox)
     listItem.appendChild(aEvent)
     searchTodoList.appendChild(listItem)
 }
@@ -122,7 +141,7 @@ async function updateTodo(name) {
 
     //console.log(todosList)
     todosList.forEach(todo => {
-        addUserWall(name,   todo.todo)
+        addUserWall(name, todo.todo, todo.checked)
     })
 }
 

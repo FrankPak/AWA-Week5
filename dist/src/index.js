@@ -33,7 +33,7 @@ router.post('/addd', (req, res) => {
 router.post('/add', async (req, res) => {
     const name = req.body.name;
     const todo = req.body.todo;
-    const newTodo = { todo: todo };
+    const newTodo = { todo: todo, checked: false };
     promises_1.console.log(newTodo);
     try {
         const user = await User_1.User.findOne({ name: name });
@@ -79,6 +79,22 @@ router.put('/update', async (req, res) => {
     user.todos.splice(todoIndex, 1);
     await user.save();
     res.send(`Todo deleted successfully.`);
+});
+router.put('/updateTodo', async (req, res) => {
+    let username = req.body.name;
+    let todo = req.body.todo;
+    let checked = req.body.checked;
+    const user = await User_1.User.findOne({ name: username });
+    if (!user) {
+        res.send("User not found!");
+        return;
+    }
+    else {
+        let todoIndex = user.todos.findIndex((element) => element.todo === todo);
+        user.todos[todoIndex].checked = checked;
+        await user.save();
+        res.send(`Todo checked successfully.`);
+    }
 });
 exports.default = router;
 //# sourceMappingURL=index.js.map
