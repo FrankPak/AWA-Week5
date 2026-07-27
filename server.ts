@@ -9,12 +9,12 @@ const port = 3000
 //const __dirname = path.resolve()
 
 const mongoDB: string = "mongodb://127.0.0.1:27017/testdb"
-mongoose.connect(mongoDB)
+mongoose.connect(mongoDB);
 mongoose.Promise = Promise
-const db: Connection = mongoose.connection
+const testdb: Connection = mongoose.connection
 
 
-db.on("error", console.error.bind(console, "MongoDB connection error"))
+testdb.on("error", console.error.bind(console, "MongoDB connection error"))
 
 
 

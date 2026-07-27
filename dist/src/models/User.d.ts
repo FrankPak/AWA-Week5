@@ -7,5 +7,5 @@ interface IUser extends Document {
     todos: ITodo[];
 }
 declare const User: mongoose.Model<IUser>;
-export { User, type IUser, type ITodo };
+export { User, IUser, ITodo };
 //# sourceMappingURL=User.d.ts.map

@@ -43,7 +43,6 @@ router.post('/add', async (req, res) => {
                 todos: [newTodo]
             });
             await user.save();
-            console.log(`Todo added successfully for user ${name}.`);
             return res.send(`Todo added successfully for user ${name}.`);
         }
         else {

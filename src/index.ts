@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import path  from "path"
-import {User, type IUser, type ITodo} from "./models/User"
+import {User,  IUser, ITodo} from "./models/User"
 
 const router: Router = Router()
 
@@ -55,7 +55,6 @@ router.post('/add', async (req: Request, res: Response) => {
       })
 
       await user.save()
-      console.log(`Todo added successfully for user ${name}.`)
       return res.send(`Todo added successfully for user ${name}.`)
     } else {
       user.todos.push(newTodo)

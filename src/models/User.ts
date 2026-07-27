@@ -20,4 +20,4 @@ let userSchema: Schema = new Schema({
 })
 
 const User: mongoose.Model<IUser> = mongoose.model<IUser>("User", userSchema)
-export { User, type IUser, type ITodo }
+export { User, IUser, ITodo }
